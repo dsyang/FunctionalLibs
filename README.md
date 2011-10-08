@@ -10,25 +10,24 @@ When there is a good amount of computation done, the performance increase is obv
 
 
 Running the included demo
-```
-sbt> run
-[info] Running Demo.Experiement
-Doing a map on lists of length 100 where the operation sleeps for 10ms
-Length of list can be passed as argument. i.e. sbt> run 1000
-Sequential 1026(ms)
-Parallel 269(ms)
-```
+
+    sbt> run
+    [info] Running Demo.Experiment
+    Doing a map on lists of length 100 where the operation sleeps for 10ms
+    Length of list can be passed as argument. i.e. sbt> run 1000
+    Sequential 1026(ms)
+    Parallel 269(ms)
+
 
 Running the Stock Market Problem from one of the 15-210 HWs
-```
-sbt> run
-[info] Running StocksMarketProblem
-Running Sequentially
-Running in Parallel
 
-Sequential: totals= 32,18,17,23,27(ms)
-Parallel: totals= 22,23,22,20,23(ms)
-```
+    sbt> run
+    [info] Running StocksMarketProblem
+    Running Sequentially
+    Running in Parallel
+    Sequential: totals= 32,18,17,23,27(ms)
+    Parallel: totals= 22,23,22,20,23(ms)
+
 
 ** Running the demo **
 
