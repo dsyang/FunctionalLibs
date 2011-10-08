@@ -1,0 +1,30 @@
+*.log
+*.tmproj
+*.swp
+*.iml
+*~
+*#
+.#*
+.DS_Store
+
+
+# /
+/classes
+/.manager
+/build
+/.settings
+/dist
+/.Test.scala.swp
+/target
+/lib_managed
+/src_managed
+
+# /project/
+/project/boot
+/project/target
+# /project/build/
+/project/build/target
+
+
+# problems
+/src/main/scala/stocks.scala
