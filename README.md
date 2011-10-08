@@ -1,4 +1,4 @@
-# ParallelLibs: A library of collections in Scala
+# FunctionalLibs: A library of collections in Scala
 
 An experimental port of the 15-210 library in Scala.
 
