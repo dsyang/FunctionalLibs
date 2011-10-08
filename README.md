@@ -2,10 +2,10 @@
 
 An experimental port of the 15-210 library in Scala.
 
-** Why? **
+**Why?**
 To take advantage of Scala's Parallel Collections and actually run parallel algorithms in parallel.
 
-** Does it actually work? **
+**Does it actually work?**
 When there is a good amount of computation done, the performance increase is obvious (as seen in the included demo).  When the computation is not as extensive, the difference is not as noticeable. In fact, the overhead of creating and joining threads may actually make the parallel implementation less efficient.
 
 
@@ -29,7 +29,7 @@ Running the Stock Market Problem from one of the 15-210 HWs
     Parallel: totals= 22,23,22,20,23(ms)
 
 
-** Running the demo **
+**Running the demo**
 
 + get scala 2.9.1 and sbt 0.11.  If you're on a mac, [homebrew](http://mxcl.github.com/homebrew/) is a great tool for installing packages. Just run ```brew install scala``` and ```brew install sbt```
 
