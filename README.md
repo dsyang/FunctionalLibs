@@ -19,15 +19,20 @@ Running the included demo
     Parallel 269(ms)
 
 
-Running the Stock Market Problem from one of the 15-210 HWs
+Running the Stock Market Problem from HW on actual stocks:
 
     sbt> run
-    [info] Running StocksMarketProblem
-    Running Sequentially
-    Running in Parallel
-    Sequential: totals= 32,18,17,23,27(ms)
-    Parallel: totals= 22,23,22,20,23(ms)
-
+    [info] Running RunStocks
+    Running test.Some(10.0)  start: 1 | end: 7
+    Running on GOOG weekly prices from 2004-2010:  The jump: Some(614.86)  Buy on:2004-08-30 Sell at: 2007-12-03
+            seq time: 8(ms)
+            par time: 10(ms)
+    Running on ARMH weekly prices from 2000-2010:  The jump: Some(15.77)  Buy on:2000-01-18 Sell at: 2000-02-28
+            seq time: 20(ms)
+            par time: 18(ms)
+    Running on AAPL weekly prices from 1990-2010:  The jump: Some(208.64999999999998)  Buy on:1997-12-22 Sell at:  2010-01-04
+            seq time: 47(ms)
+            par time: 30(ms)
 
 **Running the demo**
 
