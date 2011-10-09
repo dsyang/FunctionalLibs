@@ -27,5 +27,6 @@
 
 
 # Stock Market Problem
-/src/main/scala/stocks.scalai
+/src/main/scala/stocks.scala
+/src/main/scala/main.scala
 *.csv
