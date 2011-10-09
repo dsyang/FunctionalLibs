@@ -26,5 +26,6 @@
 /project/build/target
 
 
-# problems
-/src/main/scala/stocks.scala
+# Stock Market Problem
+/src/main/scala/stocks.scalai
+*.csv
