@@ -5,7 +5,8 @@ package lib.Sequences
 
   import scala.collection.parallel.immutable.ParVector
 
-// Essentially the Sequence Signature
+
+  //functions that act on a defined sequence
   trait Sequence[T] {
     val length: Int
 
@@ -29,12 +30,25 @@ package lib.Sequences
 
     // def showt () : TreeView[T]
 
-    // def hidel (l :ListView[T]) : Sequence[T]
+    //def hidel[T](l :ListView[T]) : Sequence[T]
 
     // def hidet (t :TreeView[T]) : Sequence[T]
   }
+  // Functions that create sequences
+  trait SequenceObject {
+    def empty[T] : Sequence[T]
 
+    def singleton[T](a:T) : Sequence[T]
 
+    def fromList[T](l:List[T]) : Sequence[T]
+
+    def tabulate[T](f: Int => T)(size: Int) : Sequence[T]
+
+    def hidel[T](lv: ListView[T]) : Sequence[T]
+
+    def seqEQ[T](f: (T,T) => Boolean)(a: Sequence[T], b:Sequence[T]) : Boolean =
+      a.map2(f)(b).reduce((b1, b2) => b1 && b2)(true)
+  }
 
   sealed abstract class TreeView[T]
   case class EMPTY[T]() extends TreeView[T]
@@ -48,7 +62,7 @@ package lib.Sequences
 
 
 // Sequential Implementation of Sequence
-  object ArraySequence {
+  object ArraySequence extends SequenceObject {
 
     def empty[T] : Sequence[T] = new ArraySequenceImpl[T] (Vector.empty)
     def singleton[T](a:T) : Sequence[T] = new ArraySequenceImpl[T] (Vector(a))
@@ -60,6 +74,12 @@ package lib.Sequences
     def tabulate[T](f: Int => T) (size: Int) : Sequence[T] = {
       if (size == 0) return empty
       new ArraySequenceImpl(Vector.tabulate (size) (f))
+    }
+
+    def hidel[T] (lv: ListView[T]) = lv match {
+        case NIL() => ArraySequence.empty
+        case CONS(h,t) => ArraySequence.tabulate(i => (if (i == 0) h
+                                                       else t(i-1) ))(t.length+1)
     }
 
     private class ArraySequenceImpl[T] (private val elems: Vector[T]) extends Sequence[T] {
@@ -120,7 +140,7 @@ package lib.Sequences
 
 
 //Parallel implementation of Sequence
-  object ParArraySequence {
+  object ParArraySequence extends SequenceObject {
 
     def empty[T] : Sequence[T] = new ParArraySequenceImpl[T] (ParVector.empty)
     def singleton[T](a:T) : Sequence[T] = new ParArraySequenceImpl[T] (ParVector(a))
@@ -131,6 +151,11 @@ package lib.Sequences
 
     def tabulate[T](f: Int => T) (size: Int) : Sequence[T] = new ParArraySequenceImpl(ParVector.tabulate (size) (f))
 
+    def hidel[T] (lv: ListView[T]) = lv match {
+        case NIL() => ParArraySequence.empty
+        case CONS(h,t) => ParArraySequence.tabulate(i => (if (i == 0) h
+                                                       else t(i-1) ))(t.length+1)
+    }
 
     private class ParArraySequenceImpl[T] (private val elems: ParVector[T]) extends Sequence[T] {
 
