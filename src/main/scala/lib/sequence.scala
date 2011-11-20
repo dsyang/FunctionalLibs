@@ -34,10 +34,8 @@ package lib.Sequences
 
     def showt () : TreeView[T]
 
-    //def hidel[T](l :ListView[T]) : Sequence[T]
-
-    // def hidet (t :TreeView[T]) : Sequence[T]
   }
+
   // Functions that create sequences
   trait SequenceObject {
     def empty[T] : Sequence[T]
@@ -49,6 +47,8 @@ package lib.Sequences
     def tabulate[T](f: Int => T)(size: Int) : Sequence[T]
 
     def hidel[T](lv: ListView[T]) : Sequence[T]
+
+    def hidet[T](t :TreeView[T]) : Sequence[T]
 
     def seqEQ[T](f: (T,T) => Boolean)(a: Sequence[T], b:Sequence[T]) : Boolean =
       a.map2(f)(b).reduce((b1, b2) => b1 && b2)(true)
@@ -81,9 +81,16 @@ package lib.Sequences
     }
 
     def hidel[T] (lv: ListView[T]) = lv match {
-        case NIL() => ArraySequence.empty
-        case CONS(h,t) => ArraySequence.tabulate(i => (if (i == 0) h
-                                                       else t(i-1) ))(t.length+1)
+      case NIL() => ArraySequence.empty
+      case CONS(h,t) => ArraySequence.tabulate(i => (if (i == 0) h
+                                                     else t(i-1) ))(t.length+1)
+    }
+
+    def hidet[T] (tv: TreeView[T]) = tv match {
+      case EMPTY() => ArraySequence.empty
+      case LEAF(x) => ArraySequence.singleton(x)
+      case NODE(l,r) => ArraySequence.tabulate( i => (if (i < l.length) l(i)
+                                                      else r(i-l.length)))(l.length+r.length)
     }
 
     private class ArraySequenceImpl[T] (private val elems: Vector[T]) extends Sequence[T] {
@@ -169,6 +176,13 @@ package lib.Sequences
         case NIL() => ParArraySequence.empty
         case CONS(h,t) => ParArraySequence.tabulate(i => (if (i == 0) h
                                                        else t(i-1) ))(t.length+1)
+    }
+
+    def hidet[T] (tv: TreeView[T]) = tv match {
+      case EMPTY() => ArraySequence.empty
+      case LEAF(x) => ArraySequence.singleton(x)
+      case NODE(l,r) => ArraySequence.tabulate( i => (if (i < l.length) l(i)
+                                                      else r(i-l.length)))(l.length+r.length)
     }
 
     private class ParArraySequenceImpl[T] (private val elems: ParVector[T]) extends Sequence[T] {

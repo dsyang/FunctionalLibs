@@ -57,6 +57,20 @@ object ArraySequenceSpec extends Properties("ArraySequence") {
     Seq.seqEQ((a:Int,b:Int) => a == b)(Seq.hidel(iSeq.showl()), iSeq)
                             }
 
+  property("showt") = forAll {l:List[String] =>
+    val sSeq = Seq.fromList(l)
+    sSeq.showt() match {
+      case EMPTY() => (sSeq.length == 0)
+      case LEAF(x) => (sSeq.length == 1 && sSeq(0) == x)
+      case NODE(ls,rs) => ((ls.toList ++ rs.toList) == l)
+    }
+                            }
+
+  property("hidet") = forAll {l:List[Int] =>
+    val iSeq = Seq.fromList(l)
+    Seq.seqEQ((a:Int, b:Int) => a == b)(Seq.hidet(iSeq.showt()), iSeq)
+                            }
+
   property("map") = forAll { (l:List[Int]) =>
     val iSeq = Seq.fromList(l)
     (((iSeq.map((i:Int) => i.toString)).map((s:String) => s.toInt)).toList  == l)
@@ -111,6 +125,20 @@ object ParArraySequenceSpec extends Properties("ParArraySequence") {
   property("hidel") = forAll {l:List[Int] =>
     val iSeq = Seq.fromList(l)
     Seq.seqEQ((a:Int,b:Int) => a == b)(Seq.hidel(iSeq.showl()), iSeq)
+                            }
+
+  property("showt") = forAll {l:List[String] =>
+    val sSeq = Seq.fromList(l)
+    sSeq.showt() match {
+      case EMPTY() => (sSeq.length == 0)
+      case LEAF(x) => (sSeq.length == 1 && sSeq(0) == x)
+      case NODE(ls,rs) => ((ls.toList ++ rs.toList) == l)
+    }
+                            }
+
+  property("hidet") = forAll {l:List[Int] =>
+    val iSeq = Seq.fromList(l)
+    Seq.seqEQ((a:Int, b:Int) => a == b)(Seq.hidet(iSeq.showt()), iSeq)
                             }
 
   property("fromList/toList") = forAll { (l:List[Int]) =>
