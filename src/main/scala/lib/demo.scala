@@ -16,6 +16,19 @@ object Data {
     val lists = for { i <- 0 to n } yield new Data(r.nextInt(10000), r.nextInt(10000))
     ParArraySequence.fromList((lists.toList))
   }
+  def parI(n:Int):Sequence[Int] = {
+    val r = new Random
+    val e = 2*n
+    val lists = for {i <- 0 to e} yield r.nextInt(10000)
+    ParArraySequence.fromList((lists.toList))
+  }
+  def regI(n:Int):Sequence[Int] = {
+    val r = new Random
+    val e = 2*n
+    val lists = for {i <- 0 to e} yield r.nextInt(10000)
+    ArraySequence.fromList((lists.toList))
+  }
+
 }
 
 
@@ -38,6 +51,28 @@ object Parallel extends Computation {
   def compute(seq: Sequence[Data]):Int = seq.map(f).nth(0)
 }
 
+trait ReduceComp {
+  def f(i:Int, j:Int):Int = {
+    Thread.sleep(10)
+    i+j
+  }
+
+  def compute(seq: Sequence[Int]):Int
+}
+
+object SeqGenReduce extends ReduceComp {
+  def compute(seq: Sequence[Int]):Int = seq.gen_reduce(f)
+}
+object ParGenReduce extends ReduceComp {
+  def compute(seq: Sequence[Int]):Int = seq.gen_reduce(f)
+}
+object SeqReduce extends ReduceComp {
+  def compute(seq: Sequence[Int]):Int = seq.reduce(f)(0)
+}
+object ParReduce extends ReduceComp {
+  def compute(seq: Sequence[Int]):Int = seq.reduce(f)(0)
+}
+
 
 object Experiement {
   def main(args: Array[String]) {
@@ -57,5 +92,27 @@ object Experiement {
     Parallel.compute(plist)
     t2 = currentTimeMillis()
     println("Parallell " + (t2-t1) + "(ms)")
+
+    val sred = Data.regI(100)
+    val pred = Data.parI(100)
+
+    t1 = currentTimeMillis()
+    SeqGenReduce.compute(sred)
+    t2 = currentTimeMillis()
+    println("Sequential Builtin Reduce: " + (t2-t1) + "(ms)")
+    t1 = currentTimeMillis()
+    ParGenReduce.compute(pred)
+    t2 = currentTimeMillis()
+    println("Parallell Builtin Reduce: " + (t2-t1) + "(ms)")
+
+    t1 = currentTimeMillis()
+    SeqReduce.compute(sred)
+    t2 = currentTimeMillis()
+    println("Sequential 210  Reduce: " + (t2-t1) + "(ms)")
+    t1 = currentTimeMillis()
+    ParReduce.compute(pred)
+    t2 = currentTimeMillis()
+    println("Parallell 210 Reduce: " + (t2-t1) + "(ms)")
+
   }
 }

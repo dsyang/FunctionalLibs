@@ -26,14 +26,21 @@ object ArraySequenceSpec extends Properties("ArraySequence") {
 
   property("tabulate") = forAll { (n:Int) =>
     val iSeq = Seq.tabulate((i:Int) => i.toString)(n % 100)
-    iSeq.length == 0 || (iSeq((n%100/2)) == (n%100/2).toString)
+    (iSeq.length == 0 || (iSeq((n%100/2)) == (n%100/2).toString))
                                }
+
+  property("showl") = forAll { (l:List[Int]) =>
+    val iSeq = Seq.fromList(l)
+    iSeq.showl() match {
+      case NIL() => (iSeq.length == 0)
+      case CONS(h,t) => (h == l.head && t.toList == l.tail)
+    }
+                            }
 
   property("map") = forAll { (l:List[Int]) =>
     val iSeq = Seq.fromList(l)
     (((iSeq.map((i:Int) => i.toString)).map((s:String) => s.toInt)).toList  == l)
                           }
-
 
   property("map2") = forAll {(l:List[Int], y:List[String]) =>
     val seq2 = (Seq.fromList(l)).map2((x:Int, y:String) => x.toString + y)(Seq.fromList(y))
@@ -66,6 +73,14 @@ object ParArraySequenceSpec extends Properties("ParArraySequence") {
 
   property("nth") = forAll { (str: String) =>
     (Seq.singleton(str)).nth(0) == str
+                            }
+
+  property("showl") = forAll { (l:List[Int]) =>
+    val iSeq = Seq.fromList(l)
+    iSeq.showl() match {
+      case NIL() => (iSeq.length == 0)
+      case CONS(h,t) => (h == l.head && t.toList == l.tail)
+    }
                             }
 
   property("fromList/toList") = forAll { (l:List[Int]) =>

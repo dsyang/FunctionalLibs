@@ -5,18 +5,6 @@ package lib.Sequences
 
   import scala.collection.parallel.immutable.ParVector
 
-  sealed abstract class TreeView[T]
-  case class EMPTY[T]() extends TreeView[T]
-  case class LEAF[T]( x: T) extends TreeView[T]
-  case class NODE[T](l: TreeView[T], r: TreeView[T])  extends TreeView[T]
-
-
-  sealed abstract class ListView[T]
-  case class NIL[T]() extends ListView[T]
-  case class CONS[T](x : T, xs: ListView[T]) extends ListView[T]
-
-
-
 // Essentially the Sequence Signature
   trait Sequence[T] {
     val length: Int
@@ -25,7 +13,7 @@ package lib.Sequences
 
     def apply(i:Int) : T
 
-    def nth (i:Int) : T
+    def nth(i:Int) : T
 
     def map[V](f: (T) => V) : Sequence[V]
 
@@ -34,8 +22,29 @@ package lib.Sequences
     def filter(f: (T) => Boolean) : Sequence[T]
 
     def reduce(f: (T,T) => T)(base: T): T
+
+    def gen_reduce(f: (T,T) => T):T
+
+    def showl () : ListView[T]
+
+    // def showt () : TreeView[T]
+
+    // def hidel (l :ListView[T]) : Sequence[T]
+
+    // def hidet (t :TreeView[T]) : Sequence[T]
   }
 
+
+
+  sealed abstract class TreeView[T]
+  case class EMPTY[T]() extends TreeView[T]
+  case class LEAF[T]( x: T) extends TreeView[T]
+  case class NODE[T](l: TreeView[T], r: TreeView[T])  extends TreeView[T]
+
+
+  sealed abstract class ListView[T]
+  case class NIL[T]() extends ListView[T]
+  case class CONS[T](x : T, xs: Sequence[T]) extends ListView[T]
 
 
 // Sequential Implementation of Sequence
@@ -48,8 +57,10 @@ package lib.Sequences
                                                          (l.length)
                                                          ((n:Int) => l(n)))
 
-    def tabulate[T](f: Int => T) (size: Int) : Sequence[T] = new ArraySequenceImpl(Vector.tabulate (size) (f))
-
+    def tabulate[T](f: Int => T) (size: Int) : Sequence[T] = {
+      if (size == 0) return empty
+      new ArraySequenceImpl(Vector.tabulate (size) (f))
+    }
 
     private class ArraySequenceImpl[T] (private val elems: Vector[T]) extends Sequence[T] {
 
@@ -60,6 +71,13 @@ package lib.Sequences
       def nth (i:Int) = elems(i)
 
       val toList = elems.toList
+
+      def gen_reduce(f: (T,T) => T):T = elems.reduce[T](f)
+
+      def showl () : ListView[T]= elems.length match{
+        case 0 => NIL()
+        case _ => CONS (elems.head, ArraySequence.tabulate ((i:Int) => elems(i+1))(length-1))
+      }
 
       def map[V](f: (T) => V) = new ArraySequenceImpl[V]( elems.map(f))
 
@@ -124,12 +142,19 @@ package lib.Sequences
 
       val toList = elems.toList
 
+      def showl () : ListView[T]= elems.length match{
+        case 0 => NIL()
+        case _ => CONS (elems.head, ArraySequence.tabulate ((i:Int) => elems(i+1))(length-1))
+      }
+
       def map[V](f: (T) => V) = new ParArraySequenceImpl[V]( elems.map(f))
 
       def map2[A,B] (f: ((T),A) => B) (b: Sequence[A]): Sequence[B] =
         ParArraySequence.tabulate ((i:Int) => f( elems(i), b.nth(i))) ((b.length).min(elems.length))
 
       def filter(p:(T) => Boolean ): Sequence[T] = new ParArraySequenceImpl[T](elems.filter(p))
+
+      def gen_reduce(f: (T,T) => T):T = elems.reduce[T](f)
 
       def reduce (f: (T,T) => T)(base:T):T =
         elems.length match{
@@ -161,4 +186,3 @@ package lib.Sequences
 
     }
   }
-
