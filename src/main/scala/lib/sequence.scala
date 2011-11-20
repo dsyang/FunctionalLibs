@@ -22,13 +22,17 @@ package lib.Sequences
 
     def filter(f: (T) => Boolean) : Sequence[T]
 
+    def take(i:Int) : Sequence[T]
+
+    def drop(i:Int) : Sequence[T]
+
     def reduce(f: (T,T) => T)(base: T): T
 
     def gen_reduce(f: (T,T) => T):T
 
     def showl () : ListView[T]
 
-    // def showt () : TreeView[T]
+    def showt () : TreeView[T]
 
     //def hidel[T](l :ListView[T]) : Sequence[T]
 
@@ -53,7 +57,7 @@ package lib.Sequences
   sealed abstract class TreeView[T]
   case class EMPTY[T]() extends TreeView[T]
   case class LEAF[T]( x: T) extends TreeView[T]
-  case class NODE[T](l: TreeView[T], r: TreeView[T])  extends TreeView[T]
+  case class NODE[T](l: Sequence[T], r: Sequence[T])  extends TreeView[T]
 
 
   sealed abstract class ListView[T]
@@ -90,13 +94,23 @@ package lib.Sequences
 
       def nth (i:Int) = elems(i)
 
+      def take (i:Int) = new ArraySequenceImpl[T] (elems.take(i))
+
+      def drop (i:Int) = new ArraySequenceImpl[T] (elems.drop(i))
+
       val toList = elems.toList
 
       def gen_reduce(f: (T,T) => T):T = elems.reduce[T](f)
 
-      def showl () : ListView[T]= elems.length match{
+      def showl () : ListView[T] = elems.length match{
         case 0 => NIL()
         case _ => CONS (elems.head, ArraySequence.tabulate ((i:Int) => elems(i+1))(length-1))
+      }
+
+      def showt (): TreeView[T] = elems.length match{
+        case 0 => EMPTY()
+        case 1 => LEAF(elems(0))
+        case _ => {val n = (elems.length / 2);NODE(this.take(n), this.drop(n))}
       }
 
       def map[V](f: (T) => V) = new ArraySequenceImpl[V]( elems.map(f))
@@ -167,9 +181,19 @@ package lib.Sequences
 
       val toList = elems.toList
 
+      def take (i:Int) = new ParArraySequenceImpl[T] (elems.take(i))
+
+      def drop (i:Int) = new ParArraySequenceImpl[T] (elems.drop(i))
+
       def showl () : ListView[T]= elems.length match{
         case 0 => NIL()
-        case _ => CONS (elems.head, ArraySequence.tabulate ((i:Int) => elems(i+1))(length-1))
+        case _ => CONS (elems.head, ParArraySequence.tabulate ((i:Int) => elems(i+1))(length-1))
+      }
+
+      def showt (): TreeView[T] = elems.length match{
+        case 0 => EMPTY()
+        case 1 => LEAF(elems(0))
+        case _ => {val n = (elems.length / 2);NODE(this.take(n), this.drop(n))}
       }
 
       def map[V](f: (T) => V) = new ParArraySequenceImpl[V]( elems.map(f))

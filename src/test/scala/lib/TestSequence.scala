@@ -24,6 +24,16 @@ object ArraySequenceSpec extends Properties("ArraySequence") {
     (s.length == l.length) && (s.toList == l)
                                       }
 
+  property("take") = forAll {(l:List[Int], n: Int) =>
+    val iSeq = Seq.fromList (l)
+    ((n < l.length/3) ==> (iSeq.take(n).toList == l.take(n)))
+                           }
+
+  property("drop") = forAll {(l:List[Int], n: Int) =>
+    val iSeq = Seq.fromList (l)
+    ((n < l.length/3) ==> (iSeq.drop(n).toList == l.drop(n)))
+                           }
+
   property("tabulate") = forAll { (n:Int) =>
     val iSeq = Seq.tabulate((i:Int) => i.toString)(n % 100)
     (iSeq.length == 0 || (iSeq((n%100/2)) == (n%100/2).toString))
@@ -107,6 +117,16 @@ object ParArraySequenceSpec extends Properties("ParArraySequence") {
     val s = Seq.fromList(l)
     (s.length == l.length) && (s.toList == l)
                                       }
+
+  property("take") = forAll {(l:List[Int], n: Int) =>
+    val iSeq = Seq.fromList (l)
+    ((n < l.length/3) ==> (iSeq.take(n).toList == l.take(n)))
+                           }
+
+  property("drop") = forAll {(l:List[Int], n: Int) =>
+    val iSeq = Seq.fromList (l)
+    ((n < l.length/3) ==> (iSeq.drop(n).toList == l.drop(n)))
+                           }
 
   property("tabulate") = forAll { (n:Int) =>
     val iSeq = Seq.tabulate((i:Int) => i.toString)(n % 100)
