@@ -34,13 +34,51 @@ package lib.Sequences
 
     def showt () : TreeView[T]
 
+    /* Returns the index of the maximal value based on the ordering given */
+    //def argmax (c: ord[T]) : Int
+
+    //    def scan (op: (T,T) => T)(b: T) : (Seqence[T], T)
+
+    //def iter[A] (fn: (A,T) => A)(b: A) : A
+
+    //def inerh[A] (fn: (A,T) => A)(b: A) : (Sequence[A], A)
+
+    //def partition (i:Int) : Sequence[Sequence[T]]
+
+    //def inject(v: Sequence[(Int,T)]) : Sequence[T]
+
+    //def append(s: Sequence[T]) : Sequence[T]
+
+    //def rake(start:Int, end:Int, step:Int) : Sequence[T]
+
+    //def subseq(start:Int, end:Int) : Sequence[T]
+
+    //def splitMid(i:Int): Option[(Sequence[T], T, Sequence[T])]
+
+    //def sort (c: ord[T]) : Sequence[T]
+
+    //def merge (c: ord[T])(m: Sequence[T]) : Sequence[T]
+
+    //def toString (fn: T => String) : String
+
   }
 
   // Functions that create sequences
   trait SequenceObject {
+    /* Given an ordering for the elements, generate a odering for sequences of elements*/
+    //def collate[T](order: ord[T]) : ord[Sequence[T]]
+
+    //def collect[A,T](c: ord[A])(ss: Sequence[(A,T)]) : Sequence[Sequence[(A,T)]]
+
+    //def tokens (fn: Char => Boolean) (s:String) : Sequence[String]
+
+    //def fields(p: Char => Boolean)(s:String) : Sequence[String]
+
     def empty[T] : Sequence[T]
 
     def singleton[T](a:T) : Sequence[T]
+
+    //def flatten[T] (ss: Sequence[Sequence[T]]) : Sequence[T]
 
     def fromList[T](l:List[T]) : Sequence[T]
 
