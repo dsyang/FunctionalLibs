@@ -7,11 +7,11 @@ package lib.utils
   case object EQUAL extends Order
 
 
-
   object compares {
+    type ord[A] = (A,A) => Order
+
     def IntCompare (x : Int, y: Int) : Order =
       if(x > y) GREATER else
         if(x < y) LESS else
           EQUAL
   }
-
