@@ -55,7 +55,7 @@ package lib.Sequences
 
     //def splitMid(i:Int): Option[(Sequence[T], T, Sequence[T])]
 
-    //def sort (c: ord[T]) : Sequence[T]
+    def sort (c: ord[T]) : Sequence[T]
 
     //def merge (c: ord[T])(m: Sequence[T]) : Sequence[T]
 
@@ -207,7 +207,25 @@ package lib.Sequences
       def scan (op: (T,T) => T)(b: T) : (Sequence[T], T) = {
         val e = elems.scan(b)(op)
         (new ArraySequenceImpl[T](e.take(e.length-1)), e(e.length-1))
+      }
+
+
+
+      def sort (c : ord[T]) : Sequence[T] = {
+        def qs_l (v:Vector[T]): Vector[T] = v.length match {
+          case 0 => Vector.empty
+          case 1 => v
+          case x =>
+            {
+              val p = v(x/2)
+              val L = v.filter(b => c(b,p) == LESS)
+              val E = v.filter(b => c(b,p) == EQUAL)
+              val G = v.filter(b => c(b,p) == GREATER)
+              Vector(qs_l(L), E, qs_l(G)).flatten[T]
+            }
         }
+        ArraySequence.fromList((qs_l(elems).toList))
+      }
     }
   }
 
@@ -311,10 +329,26 @@ package lib.Sequences
             f (base, redh (0, (elems.length-1)))
           }
         }
+
       def scan (op: (T,T) => T)(b: T) : (Sequence[T], T) = {
         val e = elems.scan(b)(op)
         (new ParArraySequenceImpl[T](e.take(e.length-1)), e(e.length-1))
       }
 
+      def sort (c : ord[T]) : Sequence[T] = {
+        def qs_l (v:Vector[T]): Vector[T] = v.length match {
+          case 0 => Vector.empty
+          case 1 => v
+          case x =>
+            {
+              val p = v(x/2)
+              val L = v.filter(b => c(b,p) == LESS)
+              val E = v.filter(b => c(b,p) == EQUAL)
+              val G = v.filter(b => c(b,p) == GREATER)
+              Vector(qs_l(L), E, qs_l(G)).flatten[T]
+            }
+        }
+        ParArraySequence.fromList((qs_l(elems.seq).toList))
+      }
     }
   }
