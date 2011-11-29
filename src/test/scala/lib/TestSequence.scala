@@ -49,6 +49,13 @@ object ArraySequenceSpec extends Properties("ArraySequence") {
     (iSeq.sort(lib.utils.compares.IntCompare).toList == l.sortWith((i,j) => i < j))
                            }
 
+  property("merge") = forAll {(l:List[Int],ll:List[Int]) => {
+    val (iSeq1,iSeq2) = (Seq.fromList(l), Seq.fromList(ll));
+    val cmp = (i:Int,j:Int) => i < j
+    (iSeq1.merge(lib.utils.compares.IntCompare)(iSeq2).toList == (l ++ ll).sortWith(cmp))
+  }
+                              }
+
   property("tabulate") = forAll { (n:Int) =>
     val iSeq = Seq.tabulate((i:Int) => i.toString)(n % 100)
     (iSeq.length == 0 || (iSeq((n%100/2)) == (n%100/2).toString))
@@ -177,6 +184,13 @@ object ParArraySequenceSpec extends Properties("ParArraySequence") {
     val iSeq = Seq.fromList(l)
     (iSeq.sort(lib.utils.compares.IntCompare).toList == l.sortWith((i,j) => i < j))
                            }
+
+  property("merge") = forAll {(l:List[Int],ll:List[Int]) => {
+    val (iSeq1,iSeq2) = (Seq.fromList(l), Seq.fromList(ll));
+    val cmp = (i:Int,j:Int) => i < j
+    (iSeq1.merge(lib.utils.compares.IntCompare)(iSeq2).toList == (l ++ ll).sortWith(cmp))
+  }
+                              }
 
   property("fromList/toList") = forAll { (l:List[Int]) =>
     val s = Seq.fromList(l)

@@ -57,7 +57,7 @@ package lib.Sequences
 
     def sort (c: ord[T]) : Sequence[T]
 
-    //def merge (c: ord[T])(m: Sequence[T]) : Sequence[T]
+    def merge (c: ord[T])(m: Sequence[T]) : Sequence[T]
 
     //def toString (fn: T => String) : String
 
@@ -209,7 +209,9 @@ package lib.Sequences
         (new ArraySequenceImpl[T](e.take(e.length-1)), e(e.length-1))
       }
 
-
+      def merge (c : ord[T]) (m: Sequence[T]) : Sequence[T]= {
+        (hidet (NODE(this,m))).sort(c)
+      }
 
       def sort (c : ord[T]) : Sequence[T] = {
         def qs_l (v:Vector[T]): Vector[T] = v.length match {
@@ -333,6 +335,10 @@ package lib.Sequences
       def scan (op: (T,T) => T)(b: T) : (Sequence[T], T) = {
         val e = elems.scan(b)(op)
         (new ParArraySequenceImpl[T](e.take(e.length-1)), e(e.length-1))
+      }
+
+      def merge (c : ord[T]) (m: Sequence[T]) : Sequence[T]= {
+        (hidet (NODE(this,m))).sort(c)
       }
 
       def sort (c : ord[T]) : Sequence[T] = {
