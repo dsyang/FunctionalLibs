@@ -19,6 +19,11 @@ object ArraySequenceSpec extends Properties("ArraySequence") {
     (Seq.singleton(str)).nth(0) == str
                             }
 
+  property("append") = forAll { (l:List[Int], ll:List[Int]) =>
+    Seq.seqEQ((a:Int,b:Int) => a==b) (Seq.fromList(l).append(Seq.fromList(ll)),
+                                      Seq.fromList(l ++ ll))
+                             }
+
   property("fromList/toList") = forAll { (l:List[Int]) =>
     val s = Seq.fromList(l)
     (s.length == l.length) && (s.toList == l)
@@ -85,6 +90,13 @@ object ArraySequenceSpec extends Properties("ArraySequence") {
     l.length == 0 || ((Seq.fromList(l).reduce((h,t) => t)("")) == l.last)
                              }
 
+  property("scan") = forAll { (l:List[Int]) =>
+    { val iSeq = Seq.fromList(l)
+      val (pre,ans) = (iSeq.scan((i:Int, j:Int) => j+i)(0))
+      val lans = l.foldLeft(0)(_+_)
+      ((ans == lans) && pre.length == l.length)
+     }
+                             }
   val list_gen_no_five = listOf[Int] (Gen.choose(20,5000))
 
   property("filter") = forAll(list_gen_no_five)({ (l:List[Int]) =>
@@ -108,6 +120,11 @@ object ParArraySequenceSpec extends Properties("ParArraySequence") {
   property("nth") = forAll { (str: String) =>
     (Seq.singleton(str)).nth(0) == str
                             }
+
+  property("append") = forAll { (l:List[Int], ll:List[Int]) =>
+    Seq.seqEQ((a:Int,b:Int) => a==b) (Seq.fromList(l).append(Seq.fromList(ll)),
+                                      Seq.fromList(l ++ ll))
+                             }
 
   property("seqEQ") = forAll {l:List[Int] =>
     val iSeq = Seq.fromList(l)
@@ -175,6 +192,13 @@ object ParArraySequenceSpec extends Properties("ParArraySequence") {
     l.length == 0 || ((Seq.fromList(l).reduce((h,t) => t)("")) == l.last)
                              }
 
+  property("scan") = forAll { (l:List[Int]) =>
+    { val iSeq = Seq.fromList(l)
+      val (pre,ans) = (iSeq.scan((i:Int, j:Int) => j+i)(0))
+      val lans = l.foldLeft(0)(_+_)
+      ((ans == lans) && pre.length == l.length)
+     }
+                           }
   val list_gen_no_five = listOf[Int] (Gen.choose(20,5000))
 
   property("filter") = forAll(list_gen_no_five)({ (l:List[Int]) =>

@@ -37,7 +37,7 @@ package lib.Sequences
     /* Returns the index of the maximal value based on the ordering given */
     //def argmax (c: ord[T]) : Int
 
-    //    def scan (op: (T,T) => T)(b: T) : (Seqence[T], T)
+    def scan (op: (T,T) => T)(b: T) : (Sequence[T], T)
 
     //def iter[A] (fn: (A,T) => A)(b: A) : A
 
@@ -47,7 +47,7 @@ package lib.Sequences
 
     //def inject(v: Sequence[(Int,T)]) : Sequence[T]
 
-    //def append(s: Sequence[T]) : Sequence[T]
+    def append(s: Sequence[T]) : Sequence[T]
 
     //def rake(start:Int, end:Int, step:Int) : Sequence[T]
 
@@ -147,6 +147,13 @@ package lib.Sequences
 
       def gen_reduce(f: (T,T) => T):T = elems.reduce[T](f)
 
+      def append(b:Sequence[T]) : Sequence[T] = {
+        val l1 = elems.length
+        val l2 = b.length
+        ArraySequence.tabulate (i => (if(i < l1) elems(i)
+                                      else b(i-l1) )) (l1+l2)
+      }
+
       def showl () : ListView[T] = elems.length match{
         case 0 => NIL()
         case _ => CONS (elems.head, ArraySequence.tabulate ((i:Int) => elems(i+1))(length-1))
@@ -192,6 +199,11 @@ package lib.Sequences
             f (base, redh (0, (elems.length-1)))
           }
         }
+
+      def scan (op: (T,T) => T)(b: T) : (Sequence[T], T) = {
+        val e = elems.scan(b)(op)
+        (new ArraySequenceImpl[T](e.take(e.length-1)), e(e.length-1))
+        }
     }
   }
 
@@ -232,6 +244,13 @@ package lib.Sequences
       def nth (i:Int) = elems(i)
 
       val toList = elems.toList
+
+      def append(b:Sequence[T]) : Sequence[T] = {
+        val l1 = elems.length
+        val l2 = b.length
+        ArraySequence.tabulate (i => (if(i < l1) elems(i)
+                                      else b(i-l1) )) (l1+l2)
+      }
 
       def take (i:Int) = new ParArraySequenceImpl[T] (elems.take(i))
 
@@ -284,6 +303,10 @@ package lib.Sequences
             f (base, redh (0, (elems.length-1)))
           }
         }
+      def scan (op: (T,T) => T)(b: T) : (Sequence[T], T) = {
+        val e = elems.scan(b)(op)
+        (new ParArraySequenceImpl[T](e.take(e.length-1)), e(e.length-1))
+      }
 
     }
   }
