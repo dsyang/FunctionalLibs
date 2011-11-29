@@ -39,6 +39,11 @@ object ArraySequenceSpec extends Properties("ArraySequence") {
     ((n < l.length/3) ==> (iSeq.drop(n).toList == l.drop(n)))
                            }
 
+  property("flatten") = forAll {l:List[List[String]] =>
+    val sSeqSeq = Seq.fromList(l.map(j => Seq.fromList(j)))
+    (Seq.flatten[String](sSeqSeq).toList == l.flatten[String])
+                              }
+
   property("tabulate") = forAll { (n:Int) =>
     val iSeq = Seq.tabulate((i:Int) => i.toString)(n % 100)
     (iSeq.length == 0 || (iSeq((n%100/2)) == (n%100/2).toString))
@@ -157,6 +162,11 @@ object ParArraySequenceSpec extends Properties("ParArraySequence") {
     val iSeq = Seq.fromList(l)
     Seq.seqEQ((a:Int, b:Int) => a == b)(Seq.hidet(iSeq.showt()), iSeq)
                             }
+
+  property("flatten") = forAll {l:List[List[String]] =>
+    val sSeqSeq = Seq.fromList(l.map(j => Seq.fromList(j)))
+    (Seq.flatten[String](sSeqSeq).toList == l.flatten[String])
+                              }
 
   property("fromList/toList") = forAll { (l:List[Int]) =>
     val s = Seq.fromList(l)

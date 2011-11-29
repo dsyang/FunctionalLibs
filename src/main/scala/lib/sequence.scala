@@ -78,7 +78,7 @@ package lib.Sequences
 
     def singleton[T](a:T) : Sequence[T]
 
-    //def flatten[T] (ss: Sequence[Sequence[T]]) : Sequence[T]
+    def flatten[T] (ss: Sequence[Sequence[T]]) : Sequence[T]
 
     def fromList[T](l:List[T]) : Sequence[T]
 
@@ -129,6 +129,10 @@ package lib.Sequences
       case LEAF(x) => ArraySequence.singleton(x)
       case NODE(l,r) => ArraySequence.tabulate( i => (if (i < l.length) l(i)
                                                       else r(i-l.length)))(l.length+r.length)
+    }
+
+    def flatten[T] (b : Sequence[Sequence[T]]) : Sequence[T] = {
+      ArraySequence.fromList(b.map(e => e.toList).toList.flatten[T])
     }
 
     private class ArraySequenceImpl[T] (private val elems: Vector[T]) extends Sequence[T] {
@@ -233,6 +237,10 @@ package lib.Sequences
       case LEAF(x) => ArraySequence.singleton(x)
       case NODE(l,r) => ArraySequence.tabulate( i => (if (i < l.length) l(i)
                                                       else r(i-l.length)))(l.length+r.length)
+    }
+
+    def flatten[T] (b : Sequence[Sequence[T]]) : Sequence[T] = {
+      ArraySequence.fromList(b.map(e => e.toList).toList.flatten[T])
     }
 
     private class ParArraySequenceImpl[T] (private val elems: ParVector[T]) extends Sequence[T] {
