@@ -1,7 +1,7 @@
 import org.scalacheck._
 import lib.Sequences._
-  import Prop._
-  import Gen._
+import Prop._
+import Gen._
 
 
 object ArraySequenceSpec extends Properties("ArraySequence") {
@@ -120,6 +120,13 @@ object ArraySequenceSpec extends Properties("ArraySequence") {
     val filtered = Seq.fromList(5 :: 3 :: l).filter((i:Int) => i < 10)
     (filtered.length == 2 && filtered.nth(0) == 5 && filtered.nth(1) == 3)
                                                })
+  property("collate") = forAll { (l:List[Int], m:List[Int]) =>
+    { import lib.utils._
+      val (iS1, iS2) = (Seq.fromList(-1 :: 3 :: l), Seq.fromList(-1 :: 4 ::m))
+      val col = Seq.collate[Int](compares.IntCompare)
+      (col(iS1, iS2) == LESS && col(iS2, iS1) == GREATER && col(iS1, iS1) == EQUAL)
+   }
+                              }
 }
 
 object ParArraySequenceSpec extends Properties("ParArraySequence") {
@@ -239,5 +246,11 @@ object ParArraySequenceSpec extends Properties("ParArraySequence") {
     val filtered = Seq.fromList(5 :: 3 :: l).filter((i:Int) => i < 10)
     (filtered.length == 2 && filtered.nth(0) == 5 && filtered.nth(1) == 3)
                                                })
-
+  property("collate") = forAll { (l:List[Int], m:List[Int]) =>
+    { import lib.utils._
+      val (iS1, iS2) = (Seq.fromList(-1 :: 3 :: l), Seq.fromList(-1 :: 4 ::m))
+      val col = Seq.collate[Int](compares.IntCompare)
+      (col(iS1, iS2) == LESS && col(iS2, iS1) == GREATER && col(iS1, iS1) == EQUAL)
+   }
+                              }
 }

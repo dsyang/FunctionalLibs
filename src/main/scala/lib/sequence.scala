@@ -66,7 +66,7 @@ package lib.Sequences
   // Functions that create sequences
   trait SequenceObject {
     /* Given an ordering for the elements, generate a odering for sequences of elements*/
-    //def collate[T](order: ord[T]) : ord[Sequence[T]]
+    def collate[T](order: ord[T]) : ord[Sequence[T]]
 
     //def collect[A,T](c: ord[A])(ss: Sequence[(A,T)]) : Sequence[Sequence[(A,T)]]
 
@@ -134,6 +134,14 @@ package lib.Sequences
     def flatten[T] (b : Sequence[Sequence[T]]) : Sequence[T] = {
       ArraySequence.fromList(b.map(e => e.toList).toList.flatten[T])
     }
+
+    def collate[T] (cmp: ord[T]) : ord[Sequence[T]] =
+      ((s1:Sequence[T], s2:Sequence[T]) => {
+        val ans = s1.map2((a:T,b:T) => cmp(a,b))(s2).toList
+          .foldLeft(EQUAL: Order)((x,y) => if(x == EQUAL) y else x)
+        if(ans == EQUAL) IntCompare(s1.length, s2.length)
+        else ans
+      })
 
     private class ArraySequenceImpl[T] (private val elems: Vector[T]) extends Sequence[T] {
 
@@ -262,6 +270,14 @@ package lib.Sequences
     def flatten[T] (b : Sequence[Sequence[T]]) : Sequence[T] = {
       ArraySequence.fromList(b.map(e => e.toList).toList.flatten[T])
     }
+
+    def collate[T](cmp: ord[T]) : ord[Sequence[T]] =
+      ((s1:Sequence[T], s2:Sequence[T]) => {
+        val ans = s1.map2((a:T,b:T) => cmp(a,b))(s2).toList
+          .foldLeft(EQUAL: Order)((x,y) => if(x == EQUAL) y else x)
+        if(ans == EQUAL) IntCompare(s1.length, s2.length)
+        else ans
+      })
 
     private class ParArraySequenceImpl[T] (private val elems: ParVector[T]) extends Sequence[T] {
 
