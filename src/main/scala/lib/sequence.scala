@@ -94,8 +94,8 @@ package lib.Sequences
 
   sealed abstract class TreeView[T]
   case class EMPTY[T]() extends TreeView[T]
-  case class LEAF[T]( x: T) extends TreeView[T]
-  case class NODE[T](l: Sequence[T], r: Sequence[T])  extends TreeView[T]
+   case class LEAF[T]( x: T) extends TreeView[T]
+   case class NODE[T](l: Sequence[T], r: Sequence[T])  extends TreeView[T]
 
 
   sealed abstract class ListView[T]
