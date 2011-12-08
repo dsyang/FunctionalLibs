@@ -43,7 +43,7 @@ package lib.Sequences
 
     def iterh[A] (fn: (A,T) => A)(b: A) : (Sequence[A], A)
 
-    //def partition (i:Int) : Sequence[Sequence[T]]
+    def partition (p:Sequence[Int]) : Sequence[Sequence[T]]
 
     //def inject(v: Sequence[(Int,T)]) : Sequence[T]
 
@@ -227,6 +227,12 @@ package lib.Sequences
           }
         }
 
+      def partition (p: Sequence[Int]) : Sequence[Sequence[T]] = {
+        var j = 0;
+        def tabf (i:Int) = ArraySequence.tabulate((k:Int) => this({var k = j; j= j+1; k}))(p(i))
+        ArraySequence.tabulate(tabf)(p.length)
+      }
+
       def iter[A] (fn: (A,T) => A)(b: A) : A = {
         elems.foldLeft(b)(fn)
       }
@@ -387,6 +393,12 @@ package lib.Sequences
             f (base, redh (0, (elems.length-1)))
           }
         }
+
+      def partition (p: Sequence[Int]) : Sequence[Sequence[T]] = {
+        var j = 0;
+        def tabf (i:Int) = ParArraySequence.tabulate((k:Int) => this({var k = j; j= j+1; k}))(p(i))
+        ParArraySequence.tabulate(tabf)(p.length)
+      }
 
       def iter[A] (fn: (A,T) => A)(b: A) : A = {
         elems.foldLeft(b)(fn)
