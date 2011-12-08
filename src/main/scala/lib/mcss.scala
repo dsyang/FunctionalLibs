@@ -1,6 +1,7 @@
 import lib.Sequences._
 import System._
 import scala.math
+
 object MCSS {
   type quad = (Int, Int, Int, Int)
 
@@ -21,11 +22,29 @@ object MCSS {
     val (b,_,_,_) : quad = mcssHelp(a)
     return b
   }
+
+	def scan_mcss(a: Sequence[Int]) : Int = {
+		val (x, t) = a.scan(_+_)(0)
+    val tab = ParArraySequence.tabulate(i => if(i+1 != x.length) x(i+1)
+                                             else t) (x.length)
+		val (m,f) = tab.scan(math.min)(Int.MaxValue)
+    val tab2 = ParArraySequence.tabulate(i => if(i+1 != m.length) m(i+1)
+                                              else f) (m.length)
+		val diff = ParArraySequence.tabulate (i => tab.nth(i) - tab2.nth(i))(a.length)
+
+		diff.reduce((a,b) => math.max(a,b))(Int.MinValue)
+	}
+
+
 }
 
 object mcss_run {
+  import MCSS._
   def main(args: Array[String]) {
-
+    val s1 = ParArraySequence.fromList (List(4, 8, 15, 16, 23, 42))
+    val s2 = ParArraySequence.fromList (List(-5, 6, 0, 4, -5, -3, -1, 0, 7, 1))
+    println("Sequence: " + scan_mcss(s1) + " Check: " + mcss(s1))
+    println("Sequence: " + scan_mcss(s2) + " Check: " + mcss(s2))
   }
 
 }
