@@ -45,7 +45,7 @@ package lib.Sequences
 
     def partition (p:Sequence[Int]) : Sequence[Sequence[T]]
 
-    //def inject(v: Sequence[(Int,T)]) : Sequence[T]
+    def inject(v: Sequence[(Int,T)]) : Sequence[T]
 
     def append(s: Sequence[T]) : Sequence[T]
 
@@ -179,6 +179,17 @@ package lib.Sequences
         val l2 = b.length
         ArraySequence.tabulate (i => (if(i < l1) elems(i)
                                       else b(i-l1) )) (l1+l2)
+      }
+
+      def inject(v: Sequence[(Int,T)]) : Sequence[T] = {
+        def new_val(i:Int) = {
+          val flt = v.filter( w => { val (idx, dat) = w
+                                    (idx == i) })
+          flt.length match {
+            case 0 => this(i)
+            case l => {val (_,d) = flt(l-1); d}
+          } }
+        ArraySequence.tabulate (new_val) (this.length)
       }
 
       def showl () : ListView[T] = elems.length match{
@@ -402,6 +413,17 @@ package lib.Sequences
 
       def iter[A] (fn: (A,T) => A)(b: A) : A = {
         elems.foldLeft(b)(fn)
+      }
+
+      def inject(v: Sequence[(Int,T)]) : Sequence[T] = {
+        def new_val(i:Int) = {
+          val flt = v.filter( w => { val (idx, dat) = w
+                                    (idx == i) })
+          flt.length match {
+            case 0 => this(i)
+            case l => {val (_,d) = flt(l-1); d}
+          } }
+        ParArraySequence.tabulate (new_val) (this.length)
       }
 
       def iterh[A] (fn: (A,T) => A)(b: A) : (Sequence[A], A) = {
