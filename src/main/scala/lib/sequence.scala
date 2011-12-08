@@ -43,9 +43,9 @@ package lib.Sequences
 
     def iterh[A] (fn: (A,T) => A)(b: A) : (Sequence[A], A)
 
-    //def partition (i:Int) : Sequence[Sequence[T]]
+    def partition (p:Sequence[Int]) : Sequence[Sequence[T]]
 
-    //def inject(v: Sequence[(Int,T)]) : Sequence[T]
+    def inject(v: Sequence[(Int,T)]) : Sequence[T]
 
     def append(s: Sequence[T]) : Sequence[T]
 
@@ -181,6 +181,17 @@ package lib.Sequences
                                       else b(i-l1) )) (l1+l2)
       }
 
+      def inject(v: Sequence[(Int,T)]) : Sequence[T] = {
+        def new_val(i:Int) = {
+          val flt = v.filter( w => { val (idx, dat) = w
+                                    (idx == i) })
+          flt.length match {
+            case 0 => this(i)
+            case l => {val (_,d) = flt(l-1); d}
+          } }
+        ArraySequence.tabulate (new_val) (this.length)
+      }
+
       def showl () : ListView[T] = elems.length match{
         case 0 => NIL()
         case _ => CONS (elems.head, ArraySequence.tabulate ((i:Int) => elems(i+1))(length-1))
@@ -226,6 +237,12 @@ package lib.Sequences
             f (base, redh (0, (elems.length-1)))
           }
         }
+
+      def partition (p: Sequence[Int]) : Sequence[Sequence[T]] = {
+        var j = 0;
+        def tabf (i:Int) = ArraySequence.tabulate((k:Int) => this({var k = j; j= j+1; k}))(p(i))
+        ArraySequence.tabulate(tabf)(p.length)
+      }
 
       def iter[A] (fn: (A,T) => A)(b: A) : A = {
         elems.foldLeft(b)(fn)
@@ -388,8 +405,25 @@ package lib.Sequences
           }
         }
 
+      def partition (p: Sequence[Int]) : Sequence[Sequence[T]] = {
+        var j = 0;
+        def tabf (i:Int) = ParArraySequence.tabulate((k:Int) => this({var k = j; j= j+1; k}))(p(i))
+        ParArraySequence.tabulate(tabf)(p.length)
+      }
+
       def iter[A] (fn: (A,T) => A)(b: A) : A = {
         elems.foldLeft(b)(fn)
+      }
+
+      def inject(v: Sequence[(Int,T)]) : Sequence[T] = {
+        def new_val(i:Int) = {
+          val flt = v.filter( w => { val (idx, dat) = w
+                                    (idx == i) })
+          flt.length match {
+            case 0 => this(i)
+            case l => {val (_,d) = flt(l-1); d}
+          } }
+        ParArraySequence.tabulate (new_val) (this.length)
       }
 
       def iterh[A] (fn: (A,T) => A)(b: A) : (Sequence[A], A) = {
