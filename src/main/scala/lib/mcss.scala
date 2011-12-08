@@ -21,4 +21,12 @@ object MCSS {
 		
 		B
 	}
+	
+	def mcss[T](a: Sequence[T]) : T = {
+		val x = a.scan _+_ 0
+		val m = x.scan Math.min Int.maxValue
+		val diff = ParArraySequence.tabulate (i => x.nth(i) - m.nth(i)) a.length
+		
+		diff.reduce Math.max Int.minValue
+	}
 }
