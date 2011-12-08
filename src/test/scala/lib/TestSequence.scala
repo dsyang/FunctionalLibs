@@ -107,6 +107,21 @@ object ArraySequenceSpec extends Properties("ArraySequence") {
     l.length == 0 || ((Seq.fromList(l).reduce((h,t) => t)("")) == l.last)
                              }
 
+  property("iter") = forAll { (l:List[Int]) =>
+    val sSeq  = Seq.fromList(l).map(m => m.toString)
+    (sSeq.iter[Int]((h,t) => h.toInt + t.toInt)(0) == l.sum)
+  }
+
+  val non_e_list = listOf1[Int](Gen.choose(12,293876))
+
+  property("iterh") = forAll{ (l:List[Int]) =>
+    (l.length == 0 || { val sSeq = Seq.fromList(l).map(m => m.toString)
+      val (pre,ans) = sSeq.iterh[Int]((i,j) => i.toInt + j.toInt)(0)
+     val lans = l.foldLeft(0)(_+_)
+     ((ans == lans) & &pre.length == l.length)
+    })
+                                        }
+
   property("scan") = forAll { (l:List[Int]) =>
     { val iSeq = Seq.fromList(l)
       val (pre,ans) = (iSeq.scan((i:Int, j:Int) => j+i)(0))
@@ -240,6 +255,8 @@ object ParArraySequenceSpec extends Properties("ParArraySequence") {
       ((ans == lans) && pre.length == l.length)
      }
                            }
+
+
   val list_gen_no_five = listOf[Int] (Gen.choose(20,5000))
 
   property("filter") = forAll(list_gen_no_five)({ (l:List[Int]) =>

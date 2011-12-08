@@ -39,9 +39,9 @@ package lib.Sequences
 
     def scan (op: (T,T) => T)(b: T) : (Sequence[T], T)
 
-    //def iter[A] (fn: (A,T) => A)(b: A) : A
+    def iter[A] (fn: (A,T) => A)(b: A) : A
 
-    //def inerh[A] (fn: (A,T) => A)(b: A) : (Sequence[A], A)
+    def iterh[A] (fn: (A,T) => A)(b: A) : (Sequence[A], A)
 
     //def partition (i:Int) : Sequence[Sequence[T]]
 
@@ -68,7 +68,7 @@ package lib.Sequences
     /* Given an ordering for the elements, generate a odering for sequences of elements*/
     def collate[T](order: ord[T]) : ord[Sequence[T]]
 
-    //def collect[A,T](c: ord[A])(ss: Sequence[(A,T)]) : Sequence[Sequence[(A,T)]]
+    def collect[A,T](c: ord[A])(ss: Sequence[(A,T)]) : Sequence[(A,Sequence[T])]
 
     //def tokens (fn: Char => Boolean) (s:String) : Sequence[String]
 
@@ -143,6 +143,21 @@ package lib.Sequences
         else ans
       })
 
+      def collect[A,T](cmp: ord[A])(ss: Sequence[(A,T)]) : Sequence[(A,Sequence[T])] = {
+        val sorted = ss.sort((a,b) => {val (x, _) = a; val (y, _) = b; cmp(x,y)})
+        def foldop (arg2: (Sequence[(A,Sequence[T])], (A, Sequence[T])), arg1: (A,T)) = {
+          val (a,b) = arg1
+          val (state, (v,s)) = arg2
+          cmp(a,v) match {
+           case  EQUAL => (state, (v, hidel[T](CONS(b, s))))
+           case _ => (hidel[(A,Sequence[T])](CONS((v,s), state)), (a, ArraySequence.singleton(b)))
+                }
+        }
+        val (bc, _) = sorted(0)
+        val (ret, _) = sorted.iter(foldop)(ArraySequence.empty, (bc, ArraySequence.empty))
+        ret
+      }
+
     private class ArraySequenceImpl[T] (private val elems: Vector[T]) extends Sequence[T] {
 
       val length = elems.length
@@ -212,10 +227,20 @@ package lib.Sequences
           }
         }
 
+      def iter[A] (fn: (A,T) => A)(b: A) : A = {
+        elems.foldLeft(b)(fn)
+      }
+
+      def iterh[A] (fn: (A,T) => A)(b: A) : (Sequence[A], A) = {
+        val e = elems.scanLeft(b)(fn)
+        (new ArraySequenceImpl[A](e.take(e.length-1)), e(length-1))
+      }
+
       def scan (op: (T,T) => T)(b: T) : (Sequence[T], T) = {
         val e = elems.scan(b)(op)
         (new ArraySequenceImpl[T](e.take(e.length-1)), e(e.length-1))
       }
+
 
       def merge (c : ord[T]) (m: Sequence[T]) : Sequence[T]= {
         (hidet (NODE(this,m))).sort(c)
@@ -278,6 +303,21 @@ package lib.Sequences
         if(ans == EQUAL) IntCompare(s1.length, s2.length)
         else ans
       })
+
+      def collect[A,T](cmp: ord[A])(ss: Sequence[(A,T)]) : Sequence[(A,Sequence[T])] = {
+        val sorted = ss.sort((a,b) => {val (x, _) = a; val (y, _) = b; cmp(x,y)})
+        def foldop (arg2: (Sequence[(A,Sequence[T])], (A, Sequence[T])), arg1: (A,T)) = {
+          val (a,b) = arg1
+          val (state, (v,s)) = arg2
+          cmp(a,v) match {
+           case  EQUAL => (state, (v, hidel[T](CONS(b, s))))
+           case _ => (hidel[(A,Sequence[T])](CONS((v,s), state)), (a, ArraySequence.singleton(b)))
+                }
+        }
+        val (bc, _) = sorted(0)
+        val (ret, _) = sorted.iter(foldop)(ArraySequence.empty, (bc, ArraySequence.empty))
+        ret
+      }
 
     private class ParArraySequenceImpl[T] (private val elems: ParVector[T]) extends Sequence[T] {
 
@@ -347,6 +387,16 @@ package lib.Sequences
             f (base, redh (0, (elems.length-1)))
           }
         }
+
+      def iter[A] (fn: (A,T) => A)(b: A) : A = {
+        elems.foldLeft(b)(fn)
+      }
+
+      def iterh[A] (fn: (A,T) => A)(b: A) : (Sequence[A], A) = {
+        val e = elems.scanLeft(b)(fn)
+        (new ParArraySequenceImpl[A](e.take(e.length-1)), e(length-1))
+      }
+
 
       def scan (op: (T,T) => T)(b: T) : (Sequence[T], T) = {
         val e = elems.scan(b)(op)
