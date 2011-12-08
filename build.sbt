@@ -14,7 +14,7 @@ maxErrors := 20
 pollInterval := 1000
 
 // append -deprecation to the options passed to the Scala compiler
-scalacOptions += "-deprecation"
+scalacOptions ++= Seq("-unchecked", "-deprecation")
 
 // define the statements initially evaluated when entering 'console', 'console-quick', or 'console-project'
 initialCommands := """
@@ -24,4 +24,3 @@ initialCommands := """
     try { f } finally { println("Elapsed: " + (now - start)/1000.0 + " s") }
   }
 """
-
